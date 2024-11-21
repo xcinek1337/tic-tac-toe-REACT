@@ -3,22 +3,46 @@ import './index.css';
 
 function App() {
 	const [board, setBoard] = useState(Array(9).fill(null));
-	const [isXNext, setIsXNext] = useState(true);
+	const [isXNext, setIsXNext] = useState<boolean>(true);
+	const [winner, setWinner] = useState<string>('');
 
-	const handleClick = (index) => {
-		// Jeśli pole jest już zajęte lub gra się skończyła, ignoruj kliknięcie
+	const winningCombinations = [
+		[0, 1, 2], // first row
+		[3, 4, 5], // second row
+		[6, 7, 8], // third row
+
+		[0, 3, 6], // first column
+		[1, 4, 7], // second column
+		[2, 5, 8], // third column
+
+		[0, 4, 8], // diagonal1
+		[2, 4, 6], // diagonal2
+	];
+	const checkWinner = (board: string[]) => {
+		for (const [a, b, c] of winningCombinations) {
+			// IF STATEMENT VVVVVVVVVVVVVVVVVVVVVV
+			// cheeck first index of winnin pattern a !== null
+			// check if first index is equal to second index a==b
+			// check if first index is equal to last index a==c
+			if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+				setWinner(board[a]);
+			}
+		}
+		return null;
+	};
+
+	const handleClick = (index: number) => {
 		if (board[index]) return;
 
-		// Aktualizacja planszy
 		const newBoard = [...board];
 		newBoard[index] = isXNext ? 'X' : 'O';
 		setBoard(newBoard);
 
-		// Zmiana kolejki
+		checkWinner(newBoard);
 		setIsXNext(!isXNext);
 	};
-	// #348ceb
-	const renderSquare = (index) => (
+
+	const renderSquare = (index: number) => (
 		<button
 			className='border-2 text-4xl w-32 h-32 border-red-400'
 			onClick={() => handleClick(index)}
@@ -45,6 +69,7 @@ function App() {
 					{renderSquare(7)}
 					{renderSquare(8)}
 				</div>
+				<p className='text-center'>WYGRANA {winner}</p>
 			</div>
 		</div>
 	);
